@@ -6,7 +6,6 @@ import {
   HttpStatus,
   Post,
   Request,
-  UseGuards
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';

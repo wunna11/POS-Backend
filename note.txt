@@ -1,0 +1,18 @@
+npx prisma init
+
+npx prisma
+
+migration
+- npx prisma migrate dev 
+
+
+CRUD controller
+- nest g resource [name]
+
+Database
+- nest g module database
+- nest g service database
+
+Response
+- response.interceptor.ts -> customize return api response format
+- response-message.decorator.ts -> show custom message in api response
