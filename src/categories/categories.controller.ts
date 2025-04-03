@@ -2,14 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors } fr
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { ResponseMessage } from 'src/response/response-message.decorator';
+import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  @UseInterceptors() 
+  @UseInterceptors(NoFilesInterceptor()) 
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoriesService.create(createCategoryDto);
   }
@@ -26,6 +26,7 @@ export class CategoriesController {
   }
 
   @Patch(':id')
+  @UseInterceptors(NoFilesInterceptor()) 
   update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
     return this.categoriesService.update(+id, updateCategoryDto);
   }

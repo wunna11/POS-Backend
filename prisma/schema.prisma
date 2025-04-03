@@ -10,9 +10,9 @@ datasource db {
 model Medicine {
   id            Int      @id @default(autoincrement())
   name          String
-  quantity      Int
+  image         String
   price         Int
-  discountPrice Int
+  discountPrice Int?
   isDiscount    Boolean
   expireDate    DateTime
   categoryId    Int

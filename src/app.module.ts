@@ -7,10 +7,15 @@ import { CategoriesModule } from './categories/categories.module';
 import { DatabaseModule } from './database/database.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './response/response.interceptor';
+import { MedicinesModule } from './medicines/medicines.module';
+import { ConfigModule } from '@nestjs/config';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, CategoriesModule, DatabaseModule],
-  controllers: [AppController],
+  imports: [
+    AuthModule, UsersModule, CategoriesModule, DatabaseModule, MedicinesModule, ConfigModule.forRoot(), CloudinaryModule],
+  controllers: [
+    AppController],
   providers: [
     AppService,
     {
@@ -19,4 +24,4 @@ import { ResponseInterceptor } from './response/response.interceptor';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
