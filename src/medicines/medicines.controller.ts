@@ -2,23 +2,20 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Upl
 import { MedicinesService } from './medicines.service';
 import { CreateMedicineDto } from './dto/create-medicine.dto';
 import { UpdateMedicineDto } from './dto/update-medicine.dto';
-import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('medicines')
 export class MedicinesController {
   constructor(
-    private readonly medicinesService: MedicinesService,
-    private readonly cloudinaryService: CloudinaryService
+    private readonly medicinesService: MedicinesService
   ) { }
-  
+
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   async create(
     @Body() createMedicineDto: CreateMedicineDto,
     @UploadedFile() file: Express.Multer.File
   ) {
-    await this.cloudinaryService.uploadImage(file);
     return await this.medicinesService.create(createMedicineDto, file);
   }
 
@@ -28,17 +25,18 @@ export class MedicinesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.medicinesService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.medicinesService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMedicineDto: UpdateMedicineDto) {
-    return this.medicinesService.update(+id, updateMedicineDto);
+  @UseInterceptors(FileInterceptor('image'))
+  async update(@Param('id') id: string, @Body() updateMedicineDto: UpdateMedicineDto, @UploadedFile() file: Express.Multer.File) {
+    return await this.medicinesService.update(+id, updateMedicineDto, file);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.medicinesService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.medicinesService.remove(+id);
   }
 }

@@ -16,3 +16,18 @@ Database
 Response
 - response.interceptor.ts -> customize return api response format
 - response-message.decorator.ts -> show custom message in api response
+
+
+    const result = await this.databaseService.medicine.findMany({
+      select: {
+        id: true,
+        name: true,
+        // other fields...
+        // Exclude the original image field from selection
+      }
+    }).then(medicines => medicines.map(medicine => ({
+      ...medicine,
+      image: 'hello'
+    })));
+
+    console.log('result', result);
