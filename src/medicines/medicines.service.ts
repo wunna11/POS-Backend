@@ -5,6 +5,7 @@ import { UpdateMedicineDto } from './dto/update-medicine.dto';
 import { DatabaseService } from 'src/database/database.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { FindAllMedicinesParams } from './dto/medicine.dto';
 
 @Injectable()
 export class MedicinesService {
@@ -35,11 +36,18 @@ export class MedicinesService {
       categoryId: Number(categoryId),
       image: image.secure_url
     };
-    return this.databaseService.medicine.create({ data });
+    return await this.databaseService.medicine.create({ data });
   }
 
-  async findAll() {
-    return await this.databaseService.medicine.findMany();
+  async findAll(params: FindAllMedicinesParams) {
+    const { name, page = 1, limit = 10 } = params;
+    return await this.databaseService.medicine.findMany({
+      where: {
+        name: name ? { contains: name, mode: 'insensitive' } : undefined
+      },
+      skip: page - 1,
+      take: limit,
+    });
   }
 
   async findOne(id: number) {
@@ -48,8 +56,8 @@ export class MedicinesService {
 
   @UseInterceptors(FileInterceptor('image'))
   async update(id: number, updateMedicineDto: UpdateMedicineDto, file: Express.Multer.File) {
-    const { price, discountPrice, isDiscount, expireDate, categoryId } = updateMedicineDto;
     let updateImage, checkCategoryId;
+    const { price, discountPrice, isDiscount, expireDate, categoryId } = updateMedicineDto;
 
     const getMedicineId = await this.databaseService.medicine.findUnique({ where: { id } })
     if (!getMedicineId) throw new Error('Medicine Id not Found!')

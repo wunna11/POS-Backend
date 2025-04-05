@@ -8,9 +8,9 @@ export class CloudinaryService {
 
   constructor() {
     cloudinary.config({
-      cloud_name: 'dc8r3tskn',
-      api_key: '263766899325519',
-      api_secret: 'S0TH_3vbo7x0tpkSH9ETm8njtqY',
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
     });
   }
 

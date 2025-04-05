@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
 import { MedicinesService } from './medicines.service';
 import { CreateMedicineDto } from './dto/create-medicine.dto';
 import { UpdateMedicineDto } from './dto/update-medicine.dto';
@@ -20,8 +20,26 @@ export class MedicinesController {
   }
 
   @Get()
-  async findAll() {
-    return await this.medicinesService.findAll();
+  async findAll(
+    @Query('name') name?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number
+  ) {
+    const data = await this.medicinesService.findAll({
+      name,
+      page: page ? Number(page) : 1,
+      limit: limit ? Number(limit) : 5
+    });
+
+    return {
+      result: data,
+      pagination: {
+        totalCount: data.length,
+        page,
+        limit,
+        totalPages: limit && Math.ceil(data.length / limit),
+      }
+    };
   }
 
   @Get(':id')
@@ -31,7 +49,11 @@ export class MedicinesController {
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('image'))
-  async update(@Param('id') id: string, @Body() updateMedicineDto: UpdateMedicineDto, @UploadedFile() file: Express.Multer.File) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateMedicineDto: UpdateMedicineDto,
+    @UploadedFile() file: Express.Multer.File
+  ) {
     return await this.medicinesService.update(+id, updateMedicineDto, file);
   }
 
