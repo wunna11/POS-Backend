@@ -16,7 +16,7 @@ export class MedicinesService {
 
   @UseInterceptors(FileInterceptor('image'))
   async create(createMedicineDto: CreateMedicineDto, file: Express.Multer.File) {
-    const { price, discountPrice, isDiscount, categoryId } = createMedicineDto;
+    const { quantity, price, discountPrice, isDiscount, categoryId } = createMedicineDto;
 
     const getCategoryId = await this.databaseService.category.findUnique({
       where: {
@@ -29,6 +29,7 @@ export class MedicinesService {
     const image = await this.cloudinaryService.uploadImage(file, 'medicine');
     const data = {
       ...createMedicineDto,
+      quantity: Number(quantity),
       price: Number(price),
       discountPrice: Number(discountPrice),
       isDiscount: Boolean(isDiscount),
@@ -57,7 +58,7 @@ export class MedicinesService {
   @UseInterceptors(FileInterceptor('image'))
   async update(id: number, updateMedicineDto: UpdateMedicineDto, file: Express.Multer.File) {
     let updateImage, checkCategoryId;
-    const { price, discountPrice, isDiscount, expireDate, categoryId } = updateMedicineDto;
+    const { quantity, price, discountPrice, isDiscount, expireDate, categoryId } = updateMedicineDto;
 
     const getMedicineId = await this.databaseService.medicine.findUnique({ where: { id } })
     if (!getMedicineId) throw new Error('Medicine Id not Found!')
@@ -77,6 +78,7 @@ export class MedicinesService {
 
     const data = {
       ...updateMedicineDto,
+      quantity: Number(price),
       price: Number(price),
       discountPrice: discountPrice && Number(discountPrice),
       isDiscount: isDiscount && Boolean(isDiscount),

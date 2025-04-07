@@ -7,7 +7,8 @@ migration
 
 
 CRUD controller
-- nest g resource [name]
+- nest g resource [name] 
+eg - nest g resource users
 
 Database
 - nest g module database
@@ -31,3 +32,35 @@ Response
     })));
 
     console.log('result', result);
+
+purchases
+- id
+- purchaseDate
+- totalAmount
+- taxAmount
+- invoiceNumber
+- createdAt
+- updatedAt
+
+purchaseDetail
+- id
+- pruchaseId
+- medicineId
+- quantity
+- price
+- totalPrice
+
+transaction
+- id
+- totalAmount
+- date
+- purchaseId
+
+
+create purchase -> create purchaseDetail -> create transaction
+
+medicine -> [
+  {id: 1, name: 'medicine 1', quantity: '3'},
+  {id: 2, name: 'medicine 2', quantity: '3'}
+]
+

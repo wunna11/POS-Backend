@@ -10,10 +10,11 @@ import { ResponseInterceptor } from './response/response.interceptor';
 import { MedicinesModule } from './medicines/medicines.module';
 import { ConfigModule } from '@nestjs/config';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { PurchasesModule } from './purchases/purchases.module';
 
 @Module({
   imports: [
-    AuthModule, UsersModule, CategoriesModule, DatabaseModule, MedicinesModule, ConfigModule.forRoot(), CloudinaryModule],
+    AuthModule, UsersModule, CategoriesModule, DatabaseModule, MedicinesModule, ConfigModule.forRoot(), CloudinaryModule, PurchasesModule],
   controllers: [
     AppController],
   providers: [

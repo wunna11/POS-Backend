@@ -8,23 +8,76 @@ datasource db {
 }
 
 model Medicine {
-  id            Int      @id @default(autoincrement())
-  name          String
-  image         String
-  price         Int
-  discountPrice Int?
-  isDiscount    Boolean
-  expireDate    DateTime
-  categoryId    Int
-  category      Category @relation(fields: [categoryId], references: [id])
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime? @updatedAt
+  id              Int              @id @default(autoincrement())
+  name            String
+  image           String
+  price           Int
+  quantity        Int
+  discountPrice   Int?
+  isDiscount      Boolean
+  expireDate      DateTime
+  categoryId      Int
+  category        Category         @relation(fields: [categoryId], references: [id])
+  purchaseDetails PurchaseDetail[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime?        @updatedAt
 }
 
 model Category {
   id        Int        @id @default(autoincrement())
   name      String
   createdAt DateTime   @default(now())
-  updatedAt DateTime?   @updatedAt
+  updatedAt DateTime?  @updatedAt
   medicines Medicine[]
+}
+
+model Purchase {
+  id              Int              @id @default(autoincrement())
+  totalAmount     Decimal
+  taxAmount       Decimal
+  invoiceNumber   String
+  status          PurchaseStatus   @default(PENDING)
+  date            DateTime
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime?        @updatedAt
+  purchaseDetails PurchaseDetail[]
+  transaction     Transaction[]
+}
+
+model PurchaseDetail {
+  id          Int       @id @default(autoincrement())
+  purchaseId  Int
+  purchase    Purchase  @relation(fields: [purchaseId], references: [id])
+  medicineId  Int
+  medicine    Medicine  @relation(fields: [medicineId], references: [id])
+  quantity    Int
+  price       Int
+  totalAmount Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
+}
+
+model Transaction {
+  id          Int       @id @default(autoincrement())
+  totalAmount Int
+  date        DateTime
+  purchaseId  Int
+  purchase    Purchase  @relation(fields: [purchaseId], references: [id])
+  status       TransactionStatus
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
+}
+
+enum PurchaseStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
 }

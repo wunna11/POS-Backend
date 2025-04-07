@@ -7,6 +7,9 @@ export class CreateMedicineDto {
   image: string;
 
   @IsNotEmpty()
+  quantity: number;
+
+  @IsNotEmpty()
   price: number;
 
   discountPrice: number;
