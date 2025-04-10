@@ -11,10 +11,11 @@ import { MedicinesModule } from './medicines/medicines.module';
 import { ConfigModule } from '@nestjs/config';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { PurchasesModule } from './purchases/purchases.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
-    AuthModule, UsersModule, CategoriesModule, DatabaseModule, MedicinesModule, ConfigModule.forRoot(), CloudinaryModule, PurchasesModule],
+    AuthModule, UsersModule, CategoriesModule, DatabaseModule, MedicinesModule, ConfigModule.forRoot(), CloudinaryModule, PurchasesModule, TransactionsModule],
   controllers: [
     AppController],
   providers: [
