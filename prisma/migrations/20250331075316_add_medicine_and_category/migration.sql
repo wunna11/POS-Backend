@@ -4,7 +4,7 @@ CREATE TABLE "Medicine" (
     "name" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL,
     "price" INTEGER NOT NULL,
-    "discountPrice" INTEGER NOT NULL,
+    "discountPercent" INTEGER NOT NULL,
     "isDiscount" BOOLEAN NOT NULL,
     "expireDate" TIMESTAMP(3) NOT NULL,
     "categoryId" INTEGER NOT NULL,

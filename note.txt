@@ -1,3 +1,11 @@
+Modules -> Controllers, Services, Providers တွေကို organize လုပ်ပေးပါတယ်။
+Controllers -> Incoming Requests တွေကို Handle လုပ်ပြီး response လုပ်ဖို့သုံးပါတယ်။
+Services -> Controllers တွေအတွက် business logic ရေးဖို့သုံးပါတယ်။
+Providers -> Services, Repositories တွေကို injectable ဖြစ်အောင်လုပ်ပေးပါတယ်။
+Middleware -> Controller စီကိုမ‌ရောက်ခင် Request တွေ handle ပါတယ်။
+Guard -> Authentication & Authorization လိုနေရာတွေမှာအများဆုံးသုံးပါတယ်။
+Interceptors -> Client ကို response ကိုမ send ခင် response ကို modify လုပ်ပါတယ်။
+
 npx prisma init
 
 npx prisma
@@ -17,7 +25,6 @@ Database
 Response
 - response.interceptor.ts -> customize return api response format
 - response-message.decorator.ts -> show custom message in api response
-
 
     const result = await this.databaseService.medicine.findMany({
       select: {
@@ -64,3 +71,5 @@ medicine -> [
   {id: 2, name: 'medicine 2', quantity: '3'}
 ]
 
+
+best selling item -> PurchaseDetail table -> loop medicineId -> quantity

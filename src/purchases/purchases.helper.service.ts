@@ -57,12 +57,15 @@ export class PurchaseHelperService {
     }
   }
 
-  calculateTotals(purchaseItems: any[], taxAmount: number) {
+  calculateTotals(purchaseItems: any[], taxPercent: number) {
     const subtotal = purchaseItems.reduce(
       (sum, item) => sum + item.quantity * item.price,
       0
     );
-    const totalAmount = subtotal + Number(taxAmount);
-    return { subtotal, totalAmount };
+
+    const taxAmount = subtotal * (taxPercent / 100);
+
+    const totalAmount = subtotal + taxAmount;
+    return { subtotal, totalAmount, taxAmount };
   }
 }

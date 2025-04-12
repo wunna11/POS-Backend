@@ -13,7 +13,7 @@ model Medicine {
   image           String
   price           Int
   quantity        Int
-  discountPrice   Int?
+  discountPercent   Int?
   isDiscount      Boolean
   expireDate      DateTime
   categoryId      Int
@@ -34,7 +34,7 @@ model Category {
 model Purchase {
   id              Int              @id @default(autoincrement())
   totalAmount     Decimal
-  taxAmount       Decimal
+  taxPercent       Decimal
   invoiceNumber   String
   status          PurchaseStatus   @default(PENDING)
   date            DateTime

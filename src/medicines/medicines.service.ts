@@ -5,18 +5,21 @@ import { UpdateMedicineDto } from './dto/update-medicine.dto';
 import { DatabaseService } from 'src/database/database.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { FindAllMedicinesParams } from './dto/medicine.dto';
+import { FilterBestSellingMedicineParams, FindAllMedicinesParams } from './dto/medicine.dto';
+import * as moment from 'moment';
+import { MedicineHelperService } from './medicine.helper.service';
 
 @Injectable()
 export class MedicinesService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly cloudinaryService: CloudinaryService
+    private readonly cloudinaryService: CloudinaryService,
+    private readonly helper: MedicineHelperService
   ) { }
 
   @UseInterceptors(FileInterceptor('image'))
   async create(createMedicineDto: CreateMedicineDto, file: Express.Multer.File) {
-    const { quantity, price, discountPrice, isDiscount, categoryId } = createMedicineDto;
+    const { quantity, price, discountPercent, isDiscount, categoryId } = createMedicineDto;
 
     const getCategoryId = await this.databaseService.category.findUnique({
       where: {
@@ -31,7 +34,7 @@ export class MedicinesService {
       ...createMedicineDto,
       quantity: Number(quantity),
       price: Number(price),
-      discountPrice: Number(discountPrice),
+      discountPercent: Number(discountPercent),
       isDiscount: Boolean(isDiscount),
       expireDate: new Date(),
       categoryId: Number(categoryId),
@@ -58,7 +61,7 @@ export class MedicinesService {
   @UseInterceptors(FileInterceptor('image'))
   async update(id: number, updateMedicineDto: UpdateMedicineDto, file: Express.Multer.File) {
     let updateImage, checkCategoryId;
-    const { quantity, price, discountPrice, isDiscount, expireDate, categoryId } = updateMedicineDto;
+    const { quantity, price, discountPercent, isDiscount, expireDate, categoryId } = updateMedicineDto;
 
     const getMedicineId = await this.databaseService.medicine.findUnique({ where: { id } })
     if (!getMedicineId) throw new Error('Medicine Id not Found!')
@@ -80,7 +83,7 @@ export class MedicinesService {
       ...updateMedicineDto,
       quantity: Number(price),
       price: Number(price),
-      discountPrice: discountPrice && Number(discountPrice),
+      discountPercent: discountPercent && Number(discountPercent),
       isDiscount: isDiscount && Boolean(isDiscount),
       expireDate: expireDate && new Date(),
       categoryId: categoryId && Number(categoryId),
@@ -96,5 +99,41 @@ export class MedicinesService {
     const result = await this.databaseService.medicine.delete({ where: { id } });
     await this.cloudinaryService.deleteImageByUrl(result.image);
     return 'delete'
+  }
+
+  async getBestSellingItemList(params: FilterBestSellingMedicineParams) {
+    const { startDate, endDate } = params;
+    
+    this.helper.validateDateRange(startDate as string, endDate as string)
+
+    const groupedData = await this.databaseService.purchaseDetail.groupBy({
+      by: ['medicineId'],
+      where: startDate && endDate ? {
+        createdAt: {
+          gte: moment(startDate, 'DD-MM-YYYY').startOf('day').toDate(), // Start of first day
+          lte: moment(endDate, 'DD-MM-YYYY').endOf('day').toDate() // End of last day
+        }
+      } : undefined,
+      _sum: {
+        quantity: true
+      },
+      orderBy: {
+        _sum: {
+          quantity: 'desc'
+        }
+      }
+    });
+
+    const result = await Promise.all(
+      groupedData.map(async (item) => {
+        const medicine = await this.databaseService.medicine.findUnique({
+          where: { id: item.medicineId },
+          select: { name: true }
+        });
+        return { id: item.medicineId, name: medicine?.name, outOfStock: item._sum.quantity };
+      })
+    );
+
+    return result;
   }
 }

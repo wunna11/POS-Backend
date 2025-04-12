@@ -12,7 +12,7 @@ export class CreateMedicineDto {
   @IsNotEmpty()
   price: number;
 
-  discountPrice: number;
+  discountPercent: number;
 
   @IsNotEmpty()
   isDiscount: boolean;

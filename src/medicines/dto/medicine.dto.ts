@@ -3,3 +3,8 @@ export interface FindAllMedicinesParams {
   page?: number;
   limit?: number;
 }
+
+export interface FilterBestSellingMedicineParams {
+  startDate?: string,
+  endDate?: string
+}

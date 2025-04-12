@@ -1,9 +1,7 @@
-import { Type } from "class-transformer";
-import { IsArray, IsNotEmpty, IsNumber, IsPositive, Min, ValidateNested } from "class-validator";
-
+import { IsNotEmpty } from "class-validator";
 
 export class CreatePurchaseDto {
-  taxAmount: number;
+  taxPercent: number;
 
   @IsNotEmpty()
   medicines: Array<{
@@ -15,7 +13,7 @@ export class CreatePurchaseDto {
 
 export function normalizeMedicineInput(input: any): CreatePurchaseDto {
   let medicines = input.medicines;
-  
+
   // If medicines is an array with a single string element
   if (Array.isArray(medicines) && medicines.length === 1 && typeof medicines[0] === 'string') {
     try {
@@ -24,9 +22,9 @@ export function normalizeMedicineInput(input: any): CreatePurchaseDto {
       throw new Error('Invalid medicines JSON string');
     }
   }
-  
+
   return {
-    taxAmount: input.taxAmount,
+    taxPercent: input.taxPercent,
     medicines
   };
 }

@@ -13,13 +13,13 @@ export class PurchasesService {
   ) { }
 
   async create(createPurchaseDto: CreatePurchaseDto) {
-    const { taxAmount, medicines } = createPurchaseDto;
+    const { taxPercent, medicines } = createPurchaseDto;
 
-    this.helper.validateInput(taxAmount, medicines);
+    this.helper.validateInput(taxPercent, medicines);
     const medicinesFromDb = await this.helper.getMedicinesFromDb(medicines);
     const purchaseItems = this.helper.preparePurchaseItems(medicines, medicinesFromDb);
 
-    const { totalAmount } = this.helper.calculateTotals(purchaseItems, taxAmount);
+    const { totalAmount } = this.helper.calculateTotals(purchaseItems, taxPercent);
     const invoiceNumber = `INV-${Date.now()}`;
 
     return await this.databaseService.$transaction(async (prisma) => {
@@ -27,7 +27,7 @@ export class PurchasesService {
       const purchase = await prisma.purchase.create({
         data: {
           totalAmount,
-          taxAmount,
+          taxPercent,
           invoiceNumber,
           date: new Date(),
           status: 'COMPLETED',
@@ -79,20 +79,4 @@ export class PurchasesService {
       };
     })
   }
-
-//  findAll() {
-//    return `This action returns all purchases`;
-//  }
-//
-//  findOne(id: number) {
-//    return `This action returns a #${id} purchase`;
-//  }
-//
-//  update(id: number, updatePurchaseDto: UpdatePurchaseDto) {
-//    return `This action updates a #${id} purchase`;
-//  }
-//
-//  remove(id: number) {
-//    return `This action removes a #${id} purchase`;
-//  }
 }
