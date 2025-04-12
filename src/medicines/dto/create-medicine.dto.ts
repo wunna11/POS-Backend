@@ -18,7 +18,7 @@ export class CreateMedicineDto {
   isDiscount: boolean;
 
   @IsNotEmpty()
-  expireDate: Date;
+  expireDate: Date | string;
 
   @IsNotEmpty()
   categoryId: number

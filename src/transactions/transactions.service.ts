@@ -14,7 +14,6 @@ export class TransactionsService {
 
   async findAll(params: FindAllTransactionsParams) {
     const { day, month, year } = params;
-    console.log('day', day, 'month', month, 'year', year);
     
     const where: Prisma.TransactionWhereInput = {};
   

@@ -19,7 +19,9 @@ export class MedicinesService {
 
   @UseInterceptors(FileInterceptor('image'))
   async create(createMedicineDto: CreateMedicineDto, file: Express.Multer.File) {
-    const { quantity, price, discountPercent, isDiscount, categoryId } = createMedicineDto;
+    const { quantity, price, discountPercent, isDiscount, expireDate, categoryId } = createMedicineDto;
+
+    this.helper.isValidDateFormat(expireDate as string);
 
     const getCategoryId = await this.databaseService.category.findUnique({
       where: {
@@ -29,6 +31,7 @@ export class MedicinesService {
 
     if (!getCategoryId) throw new Error('Category Id not found!');
 
+
     const image = await this.cloudinaryService.uploadImage(file, 'medicine');
     const data = {
       ...createMedicineDto,
@@ -36,7 +39,7 @@ export class MedicinesService {
       price: Number(price),
       discountPercent: Number(discountPercent),
       isDiscount: Boolean(isDiscount),
-      expireDate: new Date(),
+      expireDate: moment(expireDate, 'DD-MM-YYYY').add(1, 'day').toDate(),
       categoryId: Number(categoryId),
       image: image.secure_url
     };
@@ -103,7 +106,7 @@ export class MedicinesService {
 
   async getBestSellingItemList(params: FilterBestSellingMedicineParams) {
     const { startDate, endDate } = params;
-    
+
     this.helper.validateDateRange(startDate as string, endDate as string)
 
     const groupedData = await this.databaseService.purchaseDetail.groupBy({
@@ -135,5 +138,17 @@ export class MedicinesService {
     );
 
     return result;
+  }
+
+  async getExpiredItemList() {
+    const today = moment().startOf('day');
+    return await this.databaseService.medicine.findMany({
+      where: {
+        expireDate: { lt: today.toDate() }
+      },
+      orderBy: {
+        expireDate: 'asc'
+      }
+    })
   }
 }

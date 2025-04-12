@@ -63,6 +63,11 @@ export class MedicinesController {
     return await this.medicinesService.getBestSellingItemList({startDate, endDate})
   }
 
+  @Get('expired-item-list')
+  async expiredItemList() {
+    return await this.medicinesService.getExpiredItemList()
+  }
+
   @Get(':id') 
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.medicinesService.findOne(id);
