@@ -18,7 +18,7 @@ export class AuthService {
       throw new UnauthorizedException('User not found');
     }
     if (user?.password !== pass) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Password is wrong!');
     }
     const payload = { sub: user.userId, username: user.username };
     return {
